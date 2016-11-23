@@ -1,0 +1,294 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Genetic Algorithm Banner Generator</title>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        html,
+        body {
+            margin: 0 auto;
+            padding: 0;
+            font: 80%/1.2 sans-serif;
+            background: #eaeaea;
+            width: 1100px;
+            height: 100%;
+            min-height: 100%;
+        }
+
+        .main {
+            position: relative;
+            background: white;
+            padding: 10px;
+            border: 1px dotted red;
+            width: 95%;
+            height: 100%;
+            overflow: auto;
+        }
+
+        .header {
+            margin: 10px;
+        }
+
+        #btnNext {
+            margin-left: 30px;
+        }
+
+        table {
+            width: 100%;
+            border: 1px solid;
+        }
+
+        .banner {
+            display: inline-block;
+            position: relative;
+            width: 300px;
+            height: 100px;
+            border: 1px solid;
+            margin-bottom: 5px;
+            overflow: hidden;
+        }
+
+            .banner img {
+                display: inline-block;
+                position: absolute;
+                width: 50px;
+            }
+
+            .banner .label {
+                position: absolute;
+                font-size: 25px;
+                display: inline-block;
+                white-space: nowrap;
+            }
+
+        .wrapper {
+            float: left;
+            padding: 10px;
+            border: dotted 1px gray;
+        }
+
+        .content {
+        }
+
+        #template {
+            display: none;
+        }
+    </style>
+    <script>
+        var penaltyCalc = false;
+        $(window).load(function () {
+           
+            Load();
+
+            $('#btnNext').click(function () {
+                $.get("api/banner/next", {}, function () { Load(); penaltyCalc = false; });
+                
+            });
+
+            $('#btnCalcPenalty').click(function () {
+                CalcPenalty(function () {});
+
+            });
+
+        });
+
+        function CalcPenalty(cb)
+        {
+            if (penaltyCalc)
+            {
+                return;
+            }
+            penaltyCalc = true;
+
+            var isOut = function ($elem) {
+                var top = $elem.position().top,
+                left = $elem.position().left,
+                width = $elem.width(),
+                height = $elem.height();
+
+                var $parent = $elem.parent();
+                var pen = 0
+
+                if (top + height > $parent.height())
+                    pen += (top + height) - $parent.height();
+
+                if (left + width > $parent.width())
+                    pen += (left + width) - $parent.width();
+
+                return -10 * (Math.round(pen));
+            }
+            var isOver = function ($elem1, $elem2) {
+                var top1 = $elem1.position().top,
+                left1 = $elem1.position().left,
+                width1 = $elem1.width(),
+                height1 = $elem1.height(),
+                top2 = $elem2.position().top,
+                left2 = $elem2.position().left,
+                width2 = $elem2.width(),
+                height2 = $elem2.height();
+
+                if ((left1 + width1) > left2 &&
+                    left1 < (left2 + width2) &&
+                    (top1 + height1) > top2 &&
+                    top1 < (top2 + height2)) {
+                    var v = Math.round(-1 *
+                        (left1 + width1) - left2 +
+                         (left2 + width2) - left1 +
+                         (top1 + height1) - top2 +
+                           (top2 + height2) - top1
+                           );
+                    if (v < 0)
+                    { return v;}
+
+                    ;
+                }
+
+
+
+                return 0;
+            }
+
+                
+             gets = new Array();
+            var banners = $('.banner', '.content').each(function (i, e) {
+
+                var img = $("img", e);
+                var label = $(".label", e);
+                var input = $(":input[type=number]", $(e).parent());
+
+                var penalty = 0;
+                var oldValue = Number(input.val());
+
+                penalty += isOut(img);
+                penalty += isOut(label);
+                penalty += isOver(img, label);
+                penalty += isOver(label, img);
+
+                input.val(oldValue+penalty);
+               
+                gets.push(
+                    $.get("api/banner/AddScore", {
+                        score: oldValue + penalty,
+                        id: input.next().val()
+                    })
+                );
+
+               
+            });
+
+            $.when.apply($, gets).then(function () {
+                if (cb != null) { cb(); }
+            });
+
+        }
+
+        function Load() {
+            $(".content").empty();
+            $.get("api/banner/get", {}, ReadResponse);
+        }
+
+
+
+        function ReadResponse(response) {
+            resp = response;
+
+            var fonts = ["Times New Roman", "Lucida Console", "Comic Sans MS"];
+
+            $("#gen").text(response.generation);
+            var template = $("#template").children();
+            response.population.forEach(function (e, i) {
+                var newBanner = template.clone();
+                $('.content').append(newBanner);
+
+                var img =
+                $("img", newBanner)
+                    .attr("src", "images/" + e.Image + ".png")
+                    .css({
+                        top: e.LabelPosition.Y + "%",
+                        left: e.LabelPosition.X + "%"
+                    });
+
+                var label =
+                $(".label", newBanner)
+                 .css({
+                     top: e.ImagePosition.Y + "%",
+                     left: e.ImagePosition.X + "%",
+                     fontFamily: fonts[e.Font]
+                 });
+
+                var rgb1 = "rgb(" + e.BackgroundColor.R + "," + e.BackgroundColor.G + "," + e.BackgroundColor.B + ")";
+                var rgb2 = "rgb(" + e.ForegroundColor.R + "," + e.ForegroundColor.G + "," + e.ForegroundColor.B + ")";
+                $(".banner", newBanner).css({ backgroundColor: rgb1, color: rgb2 });
+
+                $(":input[type=hidden]", newBanner).val(e.Id);
+
+                var txtScore = $(":input[type=number]", newBanner);
+                txtScore
+                    .change(function () {
+
+                        var id = Number($(this).next().val());
+                        var score = Number($(this).val());
+
+                        $.get("api/banner/AddScore", { score: score, id: id });
+
+
+                    })
+                .val(e.Score);
+               
+
+
+            });
+
+
+        }
+
+        function Auto()
+        {
+            interval = setInterval(function () {
+              CalcPenalty(function () { $('#btnNext').click(); });        
+            }, 5000);
+        }
+
+        function Stop()
+        {
+            clearInterval(interval);
+        }
+
+    </script>
+</head>
+<body>
+    <div class="main">
+        <h2>Genetic Algorithm Banner Generator</h2>
+        <hr>
+        <div class="header">
+            Generation: <span id="gen">0</span>
+            <button id="btnNext">Next Generation</button>
+            <button id="btnCalcPenalty">Auto Calc Penalty</button>
+        </div>
+
+        <div class="content">
+
+
+        </div>
+
+        <div id="template">
+            <div class="wrapper">
+                <div class="banner">
+                    <img src="#" />
+                    <h1 class="label">Titulo do banner</h1>
+                </div>
+                <div>
+                    <input type="number" value="0" />
+                    <input type="hidden" value="0" />
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
