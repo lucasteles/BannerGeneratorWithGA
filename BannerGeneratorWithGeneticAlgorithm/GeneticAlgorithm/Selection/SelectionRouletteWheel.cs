@@ -10,7 +10,7 @@ namespace GeneticAlgorithm.Selection
     {
         public IGenome Select(IList<IGenome> lstgens)
         {
-            var rand = Factories.RandomFactory.GetRadomImplementation();
+            var rand = GAResolver.Resolve<IRandom>();
             double slice = rand.NextDouble() * lstgens.Sum(e=>e.Fitness+1) ;
             double total = 0;
             int selectedGenome = 0;

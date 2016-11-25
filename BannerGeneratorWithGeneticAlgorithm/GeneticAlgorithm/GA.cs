@@ -1,4 +1,5 @@
 ﻿using GeneticAlgorithm.Abstraction;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,13 +25,15 @@ namespace GeneticAlgorithm
 
         public GA()
         {
-            var decider = new GADecider();
-            Mutate = decider.GetMutate();
-            Crossover = decider.GetCrossover();
-            Fitness = decider.GetFitness();
-            Selection = decider.GetSelection();
 
-            Rand = Factories.RandomFactory.GetRadomImplementation();
+
+            Mutate    = GAResolver.Resolve<IMutate>();
+            Crossover = GAResolver.Resolve<ICrossover>();
+            Fitness   = GAResolver.Resolve<IFitness>();
+            Selection = GAResolver.Resolve<ISelection>();
+
+            Rand = GAResolver.Resolve<IRandom>();
+
             Population = new List<IGenome>();
             Adaptation = new Adaptation();
 
@@ -39,6 +42,8 @@ namespace GeneticAlgorithm
 
           
         }
+
+        
 
         public void Epoch()
         {

@@ -94,13 +94,14 @@
     <Compile Include="GeneticAlgorithm\Abstraction\AbstractCrossover.cs" />
     <Compile Include="GeneticAlgorithm\Abstraction\AbstractMutate.cs" />
     <Compile Include="GeneticAlgorithm\Abstraction\ICrossover.cs" />
+    <Compile Include="GeneticAlgorithm\Abstraction\IFactory.cs" />
     <Compile Include="GeneticAlgorithm\Abstraction\IFitness.cs" />
     <Compile Include="GeneticAlgorithm\Abstraction\IMutate.cs" />
     <Compile Include="GeneticAlgorithm\Abstraction\ISelection.cs" />
     <Compile Include="GeneticAlgorithm\Core\Adaptation.cs" />
     <Compile Include="GeneticAlgorithm\Core\Enumerators.cs" />
-    <Compile Include="GeneticAlgorithm\Core\GADecider.cs" />
     <Compile Include="GeneticAlgorithm\Core\GARandom.cs" />
+    <Compile Include="GeneticAlgorithm\Core\GAResolver.cs" />
     <Compile Include="GeneticAlgorithm\Crossover\CrossoverOBX.cs" />
     <Compile Include="GeneticAlgorithm\Crossover\CrossoverPBX.cs" />
     <Compile Include="GeneticAlgorithm\Crossover\CrossoverSimple.cs" />

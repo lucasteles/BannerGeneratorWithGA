@@ -7,40 +7,69 @@ using System.Threading.Tasks;
 
 namespace GeneticAlgorithm.Factories
 {
-    public class MutateFactory
+    public class MutateFactory  : IFactory<IMutate>
     {
-        public static IMutate GetEMImplementation()
+        public IMutate GetEMImplementation()
         {
             return new MutateEM();
         }
-        public static IMutate GetDIVMImplementation()
+        public IMutate GetDIVMImplementation()
         {
             return new MutateDIVM();
         }
-        public static IMutate GetDMImplementation()
+        public IMutate GetDMImplementation()
         {
             return new MutateDM();
         }
 
-        public static IMutate GetIMImplementation()
+        public IMutate GetIMImplementation()
         {
             return new MutateIM();
         }
 
-        public static IMutate GetIVMImplementation()
+        public IMutate GetIVMImplementation()
         {
             return new MutateIVM();
         }
 
-        public static IMutate GetSMImplementation()
+        public IMutate GetSMImplementation()
         {
             return new MutateSM();
         }
-        public static IMutate GetBitwiseImplementation()
+        public IMutate GetBitwiseImplementation()
         {
             return new MutateBitwise();
         }
 
+        public IMutate GetImplementation()
+        {
+            
+            switch (GASettings.MutationAlgorithm)
+            {
+                case MutateEnum.EM:
+                    return GetEMImplementation();
 
+                case MutateEnum.DIVM:
+                    return GetDIVMImplementation();
+                    
+                case MutateEnum.DM:
+                    return GetDMImplementation();
+                    
+                case MutateEnum.IM:
+                    return GetIMImplementation();
+                    
+                case MutateEnum.IVM:
+                    return GetIVMImplementation();
+                    
+                case MutateEnum.SM:
+                    return GetSMImplementation();
+                    
+                case MutateEnum.Bitwise:
+                    return GetBitwiseImplementation();
+ 
+            }
+
+            return null;
+        }
     }
 }

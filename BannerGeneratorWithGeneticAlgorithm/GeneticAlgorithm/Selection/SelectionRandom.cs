@@ -10,7 +10,7 @@ namespace GeneticAlgorithm.Selection
     {
         public IGenome Select(IList<IGenome> lstgenes)
         {
-            var rand = Factories.RandomFactory.GetRadomImplementation();
+            var rand = GAResolver.Resolve<IRandom>();
             var ind = rand.Next(0, lstgenes.Count);
 
             return lstgenes[ind];

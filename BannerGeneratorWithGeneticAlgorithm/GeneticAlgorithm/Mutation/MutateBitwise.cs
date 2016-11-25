@@ -11,7 +11,7 @@ namespace GeneticAlgorithm.Mutation
     {
         public override IGenome Calc(IGenome baby)
         {
-            var rand = Factories.RandomFactory.GetRadomImplementation();
+            var rand = GAResolver.Resolve<IRandom>();
             if (rand.NextDouble() > MutationRate)
                 return baby;
 

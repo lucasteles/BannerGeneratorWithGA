@@ -7,16 +7,29 @@ using System.Threading.Tasks;
 
 namespace GeneticAlgorithm.Factories
 {
-    public class SelectionFactory
+    public class SelectionFactory : IFactory<ISelection>
     {
-        public static ISelection GetRandomImplementation()
+        public ISelection GetRandomImplementation()
         {
             return new SelectionRandom();
         }
 
-        public static ISelection GetRouletteWheelSelectionImplementation()
+        public ISelection GetRouletteWheelSelectionImplementation()
         {
             return new SelectionRouletteWheel();
+        }
+
+        public ISelection GetImplementation()
+        {
+            switch (GASettings.SelectionAlgorithm)
+            {
+                case SelectionEnum.Random:
+                    return GetRandomImplementation();
+                case SelectionEnum.RouletteWheel:
+                    return GetRouletteWheelSelectionImplementation();
+            }
+
+            return null;
         }
     }
 }

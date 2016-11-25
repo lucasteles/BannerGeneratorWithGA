@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GeneticAlgorithm.Factories
 {
-    public class CrossoverFactory
+    public class CrossoverFactory : IFactory<ICrossover>
     {
         public static ICrossover GetSimpleImplementation()
         {
@@ -20,6 +20,23 @@ namespace GeneticAlgorithm.Factories
         public static ICrossover GetPBXImplementation()
         {
             return new CrossoverPBX();
+        }
+
+        public ICrossover GetImplementation()
+        {
+            switch (GASettings.CrossoverAlgorithm)
+            {
+                case CrossoverEnum.Simple:
+                    return GetSimpleImplementation();
+                    
+                case CrossoverEnum.OBX:
+                    return GetOBXImplementation();
+                    
+                case CrossoverEnum.PBX:
+                    return GetPBXImplementation();
+            }
+
+            return null;
         }
     }
 }

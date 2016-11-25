@@ -10,7 +10,7 @@ namespace GeneticAlgorithm.Crossover
     {
         public override CrossoverOperation Calc(CrossoverOperation Operation)
         {
-            var rand = Factories.RandomFactory.GetRadomImplementation();
+            var rand = GAResolver.Resolve<IRandom>();
 
             if (rand.NextDouble() > CrossoverRate || Operation.IsEqual())
                 return Operation;

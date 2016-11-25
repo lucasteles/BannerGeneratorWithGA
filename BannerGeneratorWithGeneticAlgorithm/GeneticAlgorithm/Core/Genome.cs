@@ -16,7 +16,7 @@ namespace GeneticAlgorithm
 
         public Genome()
         {
-            var rand = Factories.RandomFactory.GetRadomImplementation();
+            var rand = GAResolver.Resolve<IRandom>();
             var bgen = new byte[12];
             rand.NextBytes(bgen);
             Gens = bgen.Select(e => (int)e).ToArray();

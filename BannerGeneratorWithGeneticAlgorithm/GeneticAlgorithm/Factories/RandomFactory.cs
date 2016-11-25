@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GeneticAlgorithm.Factories
 {
-    public class RandomFactory
+    public class RandomFactory : IFactory<IRandom>
     {
         public static GARandom Rand;
 
@@ -16,14 +16,9 @@ namespace GeneticAlgorithm.Factories
             Rand = new GARandom();
         }
 
-        public static IRandom GetRadomImplementation()
+        public IRandom GetImplementation()
         {
             return Rand;
         }
-      
-
-
-
-
     }
 }

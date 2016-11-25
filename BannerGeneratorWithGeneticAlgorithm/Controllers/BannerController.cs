@@ -13,8 +13,14 @@ namespace BannerGeneratorWithGeneticAlgorithm.Controllers
         public IHttpActionResult Get()
         {
             var ga = WebApiApplication.BannerGA;
-            var ret = ga.Population.Select( (g,i) => new BannerConfig(g) { Id = i}).ToList();
-            return Json(new { generation = ga.Generation, population = ret });
+            var ret = ga.Population.Select(
+                    (g, i) => new BannerConfig(g) { Id = i }
+                ).ToList();
+            
+            return Json(new {
+                    generation = ga.Generation,
+                    population = ret
+            });
         }
 
         [HttpGet]
@@ -27,7 +33,7 @@ namespace BannerGeneratorWithGeneticAlgorithm.Controllers
                 return BadRequest("Id not found");
 
             item.Score = score;
-            
+
             return Ok();
         }
 
@@ -36,7 +42,7 @@ namespace BannerGeneratorWithGeneticAlgorithm.Controllers
         {
             // step one generation
             WebApiApplication.BannerGA.Epoch();
-            
+
             return Ok();
         }
 
